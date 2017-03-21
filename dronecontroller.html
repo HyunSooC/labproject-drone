@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <meta projectname="Drone Controller">
+        <meta version="11.29.16ver">
+        <meta charset="UTF-8">
+        <style type="text/css">
+            body h1 {text-align: center}
+            div form button {font-size:20px; height:200px; width:14%; margin-left:5%; margin-right:5%}
+	    iframe {height:300px; width:300px;}
+	    #statebar {text-align:right} 
+	</style>
+	<script type="text/javascript">
+	//    setInterval(basicvalueChange(), 1000);
+	    function newWindow(){
+		window.open("dronecontroller.html?command=changevalue");
+	    }		
+	    function httpGet(){
+		var xmlHttp = new XMLHttpRequest();
+		xmlHttp.open('GET', 'dronecontroller.html', true);
+		xmlHttp.send();
+	    }
+	</script>
+    </head>
+    <body>
+        <h1>Drone Controller</h1>
+        <hr>
+        <div id="statebar">
+            <p>Information of statement</p>
+        </div>
+	<br>
+	<br>
+        <div>
+            <form name="click" method="get" action="dronecontroller.html">
+           	<button name="command" type="submit" value="bt1">명령 내리기</button>
+    	        <button name="command" type="submit" value="bt2">사진 및 동영상 촬영</button>
+                <button name="command" type="submit" value="bt3">수동 비행 모드</button>
+    	        <button name="command" type="submit" value="bt4">드론 정지 시키기</button>
+	    </form>
+	</div>
+	<br><br>	
+	<form metod="get" action="dronecontroller.html">
+	</form>
+	<div align="center">
+	        
+	    <img id="img1" src="current_img.jpg" alt="waitting">
+            <script type="text/javascript">
+	        var img = document.getElementById('img1');
+		setInterval(function(){ img.src="current_img.jpg"; }, 2000);
+	    </script>
+        </div>
+    </body>
+</html>
