@@ -1,0 +1,207 @@
+<html>
+    <head>
+        <meta projectname="Drone Controller">
+        <meta version="11.29.16ver">
+        <meta charset="UTF-8">
+			
+        <style type="text/css">
+            body h1 {text-align: center}
+            div button {font-size:15px; height:120px; width:14%; margin-left:5%; margin-right:5%}
+	    #btn_stream {background:green;}
+	    #statebar {text-align:right}
+        </style>
+        <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="three.min.js"></script>
+    </head>
+    <body>
+        <h1>Drone Controller</h1>
+        <hr>
+        <div id="statebar">
+            <p>Information of statement</p>
+        </div>
+        <div align="center">
+            <script>
+                var renderer = new THREE.WebGLRenderer();
+		
+		renderer.setClearColor(0x00ff00);
+		//renderer.setPixalRatio(window.devicePixelRatio);
+		renderer.setSize(300, 300);
+		document.body.appendChild(renderer.domElement);
+		
+		var camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 3000);
+		//camera.position.z = 10;
+
+                var scene = new THREE.Scene();
+		var light = new THREE.AmbientLight(0xffffff, 0.5);
+		scene.add(light);
+		var light1 = new THREE.PointLight(0xffffff, 0.5);
+		scene.add(light1);
+
+		var geometry = new THREE.CubeGeometry(100, 100, 100);
+		var material = new THREE.MeshFaceMaterial([
+                    new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture("./img/left.jpg")}),
+                    new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture("./img/right.jpg")}),
+		    new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture("./img/up.jpg")}),
+		    new THREE.MeshBasicMaterial({color:"green"}),
+		    new THREE.MeshBasicMaterial({color:"pink"}),
+                    new THREE.MeshBasicMaterial({map:THREE.ImageUtils.loadTexture("./img/tail.jpg")}),
+		]);
+		
+		var cube = new THREE.Mesh(geometry, material);
+		cube.position.set(15, 15, -500);
+		cube.rotation.x = 0.8;
+		cube.rotation.y = 3.15;
+                cube.rotation.z = 0;
+		scene.add(cube);
+            </script>
+            <br>
+            <br>
+            <input id="textbox" type="text" name="member_name" value="Helllo">
+        </dv>
+	<br>
+	<br>
+        <div>
+            <button name="com" type="submit" value="bt1">명령 내리기</button>
+	    <button id="btn_stream" onclick="streaming()" name="btn" value="bt2">스트리밍 시작</button>
+            <button name="com" type="submit" value="bt3">수동 비행 모드</button>
+   	    <button id="btn_data" name="btn" value="bt4">드론 정지 시키기test</button>
+	</div>
+	<br><br>	
+	<div align="center">
+	    <img id="frame" src="{{ url_for('static', filename = 'no.jpg') }}">   
+        </div>
+	<script type="text/javascript">
+            btn_mpu = document.getElementById("btn_mpu");
+	    stream = false;
+	    btn_stream = document.getElementById("btn_stream");
+            btn_data = document.getElementById("btn_data");
+            textbox = document.getElementById("textbox");
+            //form_stream = document.getElementById('str_form');
+	    frame = document.getElementById("frame");	
+ 
+            var value_str;
+            var value_g1;
+            var value_g2;
+            var value_g3;
+	    
+            function streaming(){
+	        if(stream == false){
+		    stream = true;
+          	    btn_stream.style.background = "blue";
+	            btn_stream.innerText = "스트리밍 중";
+		    btn_stream.value="1";
+                    frame.src="{{ url_for('video_feed') }}";
+	        }
+	        else{
+	            stream = false;
+		    btn_stream.style.background = "red";
+	            btn_stream.innerText = "스트리밍 멈춤";
+		    btn_stream.value="1";
+                    frame.src="{{ url_for('video_stop') }}";
+                    frame.src="{{ url_for('static', filename = 'no.jpg') }}";
+	        }
+            }
+           
+            //$('#btn_mpu').click(function(){
+            //    $.ajax({
+            //        url:'./test', 
+            //        success:function(data){ textbox.value = data; value_gyro = data;} })
+            //})
+            setInterval(function(){
+                $.ajax({url:'./test', success:function(data){ 
+                    value_gyro = data;
+                    value_str = value_gyro.split(',');
+                    value_g1 = value_str[0].substring(1, 8);
+                    value_g2 = value_str[1].substring(0, 7);
+                    value_g3 = value_str[2].substring(0, 7);
+                    textbox.value = value_g3;
+                    requestAnimationFrame(render);
+                } })}, 500); 
+            requestAnimationFrame(render);
+            function render() {
+                  if(value_g1 > 9.5)
+                      cube.rotation.z = -1.55;
+                  else if(value_g1 > 8.5)
+                      cube.rotation.z = -1.4;
+                  else if(value_g1 > 7.5)
+                      cube.rotation.z = -1.25;
+                  else if(value_g1 > 6.5)
+                      cube.rotation.z = -1.1;
+                  else if(value_g1 > 5.5)
+                      cube.rotation.z = -0.95;
+                  else if(value_g1 > 4.5)
+                      cube.rotation.z = -0.8;
+                  else if(value_g1 > 3.5)
+                      cube.rotation.z = -0.65;
+                  else if(value_g1 > 2.5)
+                      cube.rotation.z = -0.5;
+                  else if(value_g1 > 1.5)
+                      cube.rotation.z = -0.35;
+                  else if(value_g1 > 0.5)
+                      cube.rotation.z = -0.17;
+                  else if(value_g1 > -0.5)
+                      cube.rotation.z = 0;
+                  else if(value_g1 > -1.5)
+                      cube.rotation.z = 0.17;
+                  else if(value_g1 > -2.5)
+                      cube.rotation.z = 0.35;
+                  else if(value_g1 > -3.5)
+                      cube.rotation.z = 0.5;
+                  else if(value_g1 > -4.5)
+                      cube.rotation.z = 0.65;
+                  else if(value_g1 > -5.5)
+                      cube.rotation.z = 0.8;
+                  else if(value_g1 > -6.5)
+                      cube.rotation.z = 0.95;
+                  else if(value_g1 > -7.5)
+                      cube.rotation.z = 1.1;
+                  else if(value_g1 > -8.5)
+                      cube.rotation.z = 1.25;
+                  else if(value_g1 > -9.5)
+                      cube.rotation.z = 1.4;
+                  if(value_g2 > 9.5)
+                      cube.rotation.x = 2.4;
+                  else if(value_g2 > 8.5)
+                      cube.rotation.x = 2.24;
+                  else if(value_g2 > 7.5)
+                      cube.rotation.x = 2.08;
+                  else if(value_g2 > 6.5)
+                      cube.rotation.x = 1.92;
+                  else if(value_g2 > 5.5)
+                      cube.rotation.x = 1.76;
+                  else if(value_g2 > 4.5)
+                      cube.rotation.x = 1.6;
+                  else if(value_g2 > 3.5)
+                      cube.rotation.x = 1.44;
+                  else if(value_g2 > 2.5)
+                      cube.rotation.x = 1.28;
+                  else if(value_g2 > 1.5)
+                      cube.rotation.x = 1.12;
+                  else if(value_g2 > 0.5)
+                      cube.rotation.x = 0.96;
+                  else if(value_g2 > -0.5)
+                      cube.rotation.x = 0.8;
+                  else if(value_g2 > -1.5)                   
+                      cube.rotation.x = 0.64;
+                  else if(value_g2 > -2.5)
+                      cube.rotation.x = 0.48;
+                  else if(value_g2 > -3.5)
+                      cube.rotation.x = 0.32;
+                  else if(value_g2 > -4.5)
+                      cube.rotation.x = 0.16;
+                  else if(value_g2 > -5.5)
+                      cube.rotation.x = 0;
+                  else if(value_g2 > -6.5)
+                      cube.rotation.x = -0.16;
+                  else if(value_g2 > -7.5)
+                      cube.rotation.x = -0.32;
+                  else if(value_g2 > -8.5)
+                      cube.rotation.x = -0.48;
+                  else if(value_g2 > -9.5)
+                      cube.rotation.x = -0.64;
+                  renderer.render(scene, camera);
+                  requestAnimationFrame(render);
+            }
+	</script>
+    </body>
+</html>
