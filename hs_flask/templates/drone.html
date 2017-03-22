@@ -1,18 +1,18 @@
 <html>
   <head>
-      <meta projectname="Drone Controller">
-      <meta version="11.29.16ver">
-      <meta charset="UTF-8">
+    <meta projectname="Drone Controller">
+    <meta version="11.29.16ver">
+    <meta charset="UTF-8">
 			
-      <style type="text/css">
-          body h1 {text-align: center}
-          div button {font-size:15px; height:120px; width:14%; margin-left:5%; margin-right:5%}
-   	  #btn_stream {background:green;}
-	  #statebar {text-align:right}
-      </style>
+    <style type="text/css">
+      body h1 {text-align: center}
+      div button {font-size:15px; height:120px; width:14%; margin-left:5%; margin-right:5%}
+      #btn_stream {background:green;}
+      #statebar {text-align:right}
+    </style>
   
-      <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
-      <script src="three.min.js"></script>
+    <script src="//code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="three.min.js"></script>
   </head>
   <body>
   </script>
@@ -21,7 +21,7 @@
       <div id="statebar">
           <p>Information of statement</p>
       </div>
-      <div id="data">nothing received yet</div>
+      <!--<div id="data">nothing received yet</div>-->
       <div align="center" id="3d_canvas">
       <script>
         var renderer = new THREE.WebGLRenderer();
@@ -99,13 +99,13 @@
         }
  
         if (window.EventSource) {
-          var source = new EventSource('/visualization');
+          var source = new EventSource('/visualization');	//request /visualization
           source.onmessage = function(e) {
             value_str = e.data.split(',');
             value_g1 = value_str[0].substring(1, 8);
             value_g2 = value_str[1].substring(0, 7);
             value_g3 = value_str[2].substring(0, 7);
-            $("#data").text(value_g1);
+            //$("#data").text(value_g1); to check data on web
             requestAnimationFrame(render);
           }
         }

@@ -26,6 +26,7 @@ def drone():
 def test():
   if request.headers.get('accept') == 'text/event-stream':
     def events():
+       print "start of event function\n"
        navio.util.check_apm()
        imu = navio.mpu9250.MPU9250()
        if imu.testConnection():
@@ -38,7 +39,11 @@ def test():
          m9a, m9g, m9m = imu.getMotion9()
          yield "data:%s\n\n" % format(m9a)
          time.sleep(.1)
+    print "end of if condition\n"
     return Response(events(), content_type='text/event-stream')
+    #it looks like recursive function but actually it isn't.
+    # events() called only one time
+  print "before redirect\n"
   return redirect(url_for('templates', filename='drone.html'))
 
    #m9a, m9g, m9m = imu.getMotion9()
@@ -75,7 +80,6 @@ def video_stop():
   print 'video_stop function'
   Camera().thread_stop()
   return 'ok'
-  #return send_file('/home/pi/hs/flask/no.jpg', attachment_filename='no.jpg')
 
 @app.route('/three.min.js')
 def three():
